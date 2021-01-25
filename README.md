@@ -80,7 +80,18 @@ final List<Profile> demoProfiles = [
       home: Scaffold(
           body: TinderSwipeCard(
         demoProfiles: demoProfiles,
-        myCallback: (decision) {},
+        onLike: () {
+            print("Liked Profile");
+          },
+          onDislike: () {
+            print("Disliked Profile");
+          },
+          onSuperLike: () {
+            print("Superliked profile");
+          },
+          onRefresh: () {
+            print("Refreshed profiles");
+          },
       )),
     );
   }
