@@ -4,17 +4,27 @@ import './cards.dart';
 import './matches.dart';
 
 class TinderSwipeCard extends StatefulWidget {
+  final String title;
+  final List demoProfiles;
+
+  @Deprecated(
+      "Use onLike, onDislike, onSuperLike, onRefresh instead. Will be removed in v1.0.0")
+  final Function(Decision) myCallback;
+  final Function() onLike;
+  final Function() onDislike;
+  final Function() onSuperLike;
+  final Function() onRefresh;
+
   TinderSwipeCard({
     Key key,
     this.title,
     this.demoProfiles,
     this.myCallback,
+    this.onLike,
+    this.onDislike,
+    this.onSuperLike,
+    this.onRefresh,
   }) : super(key: key);
-
-  final String title;
-  final List demoProfiles;
-
-  final Function(Decision) myCallback;
 
   @override
   _TinderSwipeCardState createState() => _TinderSwipeCardState();
@@ -25,50 +35,64 @@ class _TinderSwipeCardState extends State<TinderSwipeCard> {
 
   Widget _buildBottomBar(MatchEngine matchEngine) {
     return BottomAppBar(
-        color: Colors.transparent,
-        elevation: 0.0,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              RoundIconButton.small(
-                icon: Icons.refresh,
-                iconColor: Colors.orange,
-                onPressed: () {},
-              ),
-              RoundIconButton.large(
-                icon: Icons.clear,
-                iconColor: Colors.red,
-                onPressed: () {
+      color: Colors.transparent,
+      elevation: 0.0,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 18.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            RoundIconButton.large(
+              icon: Icons.refresh,
+              iconColor: Colors.orange,
+              onPressed: widget.onRefresh,
+            ),
+            RoundIconButton.large(
+              icon: Icons.clear,
+              iconColor: Colors.red,
+              onPressed: () {
+                if (widget.onDislike == null) {
                   matchEngine.currentMatch.nope();
                   matchEngine.cycleMatch();
-                },
-              ),
-              RoundIconButton.small(
-                icon: Icons.star,
-                iconColor: Colors.blue,
-                onPressed: () {
+                } else {
+                  matchEngine.currentMatch.nope();
+                  matchEngine.cycleMatch();
+                  widget.onDislike();
+                }
+              },
+            ),
+            RoundIconButton.large(
+              icon: Icons.star,
+              iconColor: Colors.blue,
+              onPressed: () {
+                if (widget.onSuperLike == null) {
                   matchEngine.currentMatch.superLike();
                   matchEngine.cycleMatch();
-                },
-              ),
-              RoundIconButton.large(
-                icon: Icons.favorite,
-                iconColor: Colors.green,
-                onPressed: () {
+                } else {
+                  matchEngine.currentMatch.superLike();
+                  matchEngine.cycleMatch();
+                  widget.onSuperLike();
+                }
+              },
+            ),
+            RoundIconButton.large(
+              icon: Icons.favorite,
+              iconColor: Colors.green,
+              onPressed: () {
+                if (widget.onLike == null) {
                   matchEngine.currentMatch.like();
                   matchEngine.cycleMatch();
-                },
-              ),
-              RoundIconButton.small(
-                icon: Icons.lock,
-                iconColor: Colors.purple,
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ));
+                } else {
+                  matchEngine.currentMatch.like();
+                  matchEngine.cycleMatch();
+                  widget.onLike();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -85,6 +109,21 @@ class _TinderSwipeCardState extends State<TinderSwipeCard> {
           matchEngine: matchEngine,
           onSwipeCallback: (match) {
             widget.myCallback(match);
+          },
+          onLike: () {
+            matchEngine.currentMatch.like();
+            matchEngine.cycleMatch();
+            widget.onLike();
+          },
+          onDislike: () {
+            matchEngine.currentMatch.nope();
+            matchEngine.cycleMatch();
+            widget.onDislike();
+          },
+          onSuperLike: () {
+            matchEngine.currentMatch.superLike();
+            matchEngine.cycleMatch();
+            widget.onSuperLike();
           },
         ),
       ),
