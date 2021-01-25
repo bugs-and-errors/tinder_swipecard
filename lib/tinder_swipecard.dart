@@ -5,7 +5,7 @@ import './matches.dart';
 
 class TinderSwipeCard extends StatefulWidget {
   final String title;
-  final List demoProfiles;
+  final List profiles;
 
   @Deprecated(
       "Use onLike, onDislike, onSuperLike, onRefresh instead. Will be removed in v1.0.0")
@@ -18,7 +18,7 @@ class TinderSwipeCard extends StatefulWidget {
   TinderSwipeCard({
     Key key,
     this.title,
-    this.demoProfiles,
+    this.profiles,
     this.myCallback,
     this.onLike,
     this.onDislike,
@@ -98,7 +98,7 @@ class _TinderSwipeCardState extends State<TinderSwipeCard> {
   @override
   Widget build(BuildContext context) {
     final MatchEngine matchEngine = new MatchEngine(
-        matches: widget.demoProfiles.map((final profile) {
+        matches: widget.profiles.map((final profile) {
       return Match(profile: profile);
     }).toList());
 
