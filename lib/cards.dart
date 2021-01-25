@@ -6,11 +6,22 @@ import './matches.dart';
 import './photos.dart';
 
 class CardStack extends StatefulWidget {
+  @Deprecated(
+      "Use onLike, onDislike, onSuperLike instead. Will be removed in v1.0.0")
   final Function(Decision) onSwipeCallback;
+  final Function() onLike;
+  final Function() onDislike;
+  final Function() onSuperLike;
 
   final MatchEngine matchEngine;
 
-  CardStack({this.matchEngine, this.onSwipeCallback});
+  CardStack({
+    this.matchEngine,
+    this.onSwipeCallback,
+    this.onLike,
+    this.onDislike,
+    this.onSuperLike,
+  });
 
   @override
   _CardStackState createState() => _CardStackState();
@@ -125,15 +136,24 @@ class _CardStackState extends State<CardStack> {
     switch (direction) {
       case SlideDirection.left:
         currenMatch.nope();
-        widget.onSwipeCallback(currenMatch.decision);
+        if (widget.onDislike == null)
+          widget.onSwipeCallback(currenMatch.decision);
+        else
+          widget.onDislike();
         break;
       case SlideDirection.right:
         currenMatch.like();
-        widget.onSwipeCallback(currenMatch.decision);
+        if (widget.onLike == null)
+          widget.onSwipeCallback(currenMatch.decision);
+        else
+          widget.onLike();
         break;
       case SlideDirection.up:
         currenMatch.superLike();
-        widget.onSwipeCallback(currenMatch.decision);
+        if (widget.onSuperLike == null)
+          widget.onSwipeCallback(currenMatch.decision);
+        else
+          widget.onSuperLike();
         break;
     }
 
